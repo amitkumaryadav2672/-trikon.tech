@@ -1,0 +1,40 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Doctor {
+  id           Int            @id @default(autoincrement())
+  name         String
+  speciality   String         // e.g. "Dermatologist", "Dentist", "Cardiologist"
+  experience   Int?
+  language     String?        // e.g. "English", "Hindi", "Tamil"
+  availabilities Availability[]
+  appointments   Appointment[]
+}
+
+model Availability {
+  id        Int      @id @default(autoincrement())
+  doctorId  Int
+  doctor    Doctor   @relation(fields: [doctorId], references: [id])
+  date      String   // Format: YYYY-MM-DD
+  startTime String   // Format: HH:MM or HH:MM AM/PM
+  endTime   String   // Format: HH:MM or HH:MM AM/PM
+  isBooked  Boolean  @default(false)
+}
+
+model Appointment {
+  id              Int      @id @default(autoincrement())
+  patientName     String
+  phone           String
+  doctorId        Int
+  doctor          Doctor   @relation(fields: [doctorId], references: [id])
+  appointmentDate String   // Format: YYYY-MM-DD
+  appointmentTime String   // Format: HH:MM AM/PM
+  status          String   // BOOKED, CANCELLED, RESCHEDULED
+  createdAt       DateTime @default(now())
+}
